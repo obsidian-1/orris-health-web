@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Orris Health | AI Agents for Health Diagnostics</title>
+  <meta
+    name="description"
+    content="Orris Health builds AI agents for health diagnostics, helping care teams triage cases faster, surface clinical context, and keep clinicians in control."
+  >
+  <style>
+    :root {
+      --bg: #081012;
+      --bg-soft: #0e1719;
+      --panel: #0f181b;
+      --panel-soft: #121d20;
+      --line: rgba(214, 242, 233, 0.12);
+      --line-strong: rgba(214, 242, 233, 0.2);
+      --text: #eff8f4;
+      --muted: #a8bdb6;
+      --accent: #63e7bf;
+      --accent-soft: rgba(99, 231, 191, 0.12);
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+      --max: 1160px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      text-rendering: optimizeLegibility;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button,
+    input,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    .container {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      backdrop-filter: blur(16px);
+      background: rgba(8, 16, 18, 0.88);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .site-header .bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      min-height: 76px;
+    }
+
+    .brand {
+      display: inline-flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .brand span {
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 22px;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible {
+      color: var(--text);
+    }
+
+    .btn-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      min-height: 46px;
+      padding: 0 18px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid transparent;
+      font-weight: 650;
+      transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+    }
+
+    .btn:hover,
+    .btn:focus-visible {
+      transform: translateY(-1px);
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #081012;
+      box-shadow: 0 10px 24px rgba(99, 231, 191, 0.18);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      border-color: var(--line-strong);
+      color: var(--text);
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: rgba(255, 255, 255, 0.08);
+      color: var(--muted);
+    }
+
+    .hero {
+      padding: 86px 0 72px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .hero-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, 0.8fr);
+      gap: 28px;
+      align-items: start;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      padding: 9px 12px;
+      border-radius: 999px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.03);
+      color: var(--text);
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+
+    h1 {
+      margin: 18px 0 18px;
+      max-width: 760px;
+      font-size: 4.15rem;
+      line-height: 0.96;
+    }
+
+    .hero-copy {
+      margin: 0 0 24px;
+      max-width: 640px;
+      font-size: 1.14rem;
+      color: rgba(239, 248, 244, 0.86);
+    }
+
+    .hero-points {
+      list-style: none;
+      margin: 20px 0 0;
+      padding: 0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      max-width: 760px;
+    }
+
+    .hero-points li {
+      padding: 11px 14px;
+      border-radius: 8px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.02);
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .hero-panel {
+      padding: 24px;
+      border-radius: 8px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+      display: grid;
+      gap: 16px;
+    }
+
+    .hero-panel h2 {
+      margin: 0;
+      font-size: 1.02rem;
+      letter-spacing: 0;
+    }
+
+    .hero-panel p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.96rem;
+    }
+
+    .panel-block {
+      padding: 16px;
+      border-radius: 8px;
+      background: var(--panel-soft);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .panel-block strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 0.98rem;
+    }
+
+    .panel-label {
+      display: block;
+      margin-bottom: 10px;
+      color: var(--accent);
+      font-size: 0.9rem;
+      font-weight: 650;
+    }
+
+    .section {
+      padding: 84px 0;
+    }
+
+    .section.band {
+      background: rgba(255, 255, 255, 0.02);
+      border-top: 1px solid rgba(255, 255, 255, 0.04);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+    }
+
+    .section-head {
+      max-width: 760px;
+      margin-bottom: 34px;
+    }
+
+    .section-head p:first-child {
+      margin: 0 0 10px;
+      color: var(--accent);
+      font-size: 0.95rem;
+      font-weight: 650;
+    }
+
+    .section-head h2 {
+      margin: 0 0 12px;
+      font-size: 2.5rem;
+      line-height: 1.05;
+    }
+
+    .section-head p:last-child {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.03rem;
+    }
+
+    .signal-grid,
+    .workflow-grid,
+    .modality-grid,
+    .feature-grid,
+    .footer-grid,
+    .platform-summary {
+      display: grid;
+      gap: 18px;
+    }
+
+    .signal-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .signal,
+    .step-card,
+    .modality-card,
+    .feature-card,
+    .summary-card {
+      padding: 22px;
+      border-radius: 8px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+    }
+
+    .signal span,
+    .summary-card span {
+      display: block;
+      margin-bottom: 12px;
+      color: var(--accent);
+      font-size: 0.92rem;
+      font-weight: 650;
+    }
+
+    .signal strong,
+    .summary-card strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 1.16rem;
+    }
+
+    .signal p,
+    .summary-card p,
+    .feature-card p,
+    .step-card p,
+    .modality-card p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.97rem;
+    }
+
+    .platform-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    .platform-summary {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .feature-list {
+      display: grid;
+      gap: 14px;
+    }
+
+    .feature {
+      padding: 18px;
+      border-radius: 8px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+    }
+
+    .feature strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+
+    .feature p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.97rem;
+    }
+
+    .workflow-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+
+    .step-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 34px;
+      height: 34px;
+      margin-bottom: 14px;
+      border-radius: 999px;
+      background: var(--accent-soft);
+      border: 1px solid rgba(99, 231, 191, 0.24);
+      color: var(--accent);
+      font-size: 0.95rem;
+      font-weight: 750;
+    }
+
+    .step-card h3,
+    .modality-card h3,
+    .feature-card h3 {
+      margin: 0 0 10px;
+      font-size: 1.16rem;
+    }
+
+    .modality-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .modality-card ul,
+    .checklist {
+      margin: 14px 0 0;
+      padding-left: 18px;
+      color: var(--muted);
+    }
+
+    .modality-card li,
+    .checklist li {
+      margin-bottom: 8px;
+    }
+
+    .assurance-band {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+      gap: 22px;
+      padding: 24px;
+      border-radius: 8px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .assurance-copy h3 {
+      margin: 0 0 12px;
+      font-size: 2rem;
+      line-height: 1.08;
+    }
+
+    .assurance-copy p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 1.01rem;
+    }
+
+    .assurance-points {
+      display: grid;
+      gap: 14px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .assurance-point {
+      padding: 16px;
+      border-radius: 8px;
+      background: var(--panel-soft);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+    }
+
+    .assurance-point strong {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 0.98rem;
+    }
+
+    .assurance-point span {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .feature-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .cta {
+      padding-top: 42px;
+    }
+
+    .cta-card {
+      padding: 28px;
+      border-radius: 8px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
+    }
+
+    .cta-card h2 {
+      margin: 0 0 10px;
+      max-width: 700px;
+      font-size: 2.16rem;
+      line-height: 1.08;
+    }
+
+    .cta-card p {
+      margin: 0 0 22px;
+      max-width: 720px;
+      color: rgba(239, 248, 244, 0.78);
+      font-size: 1.04rem;
+    }
+
+    footer {
+      padding: 24px 0 46px;
+    }
+
+    .footer-grid {
+      grid-template-columns: 1.1fr 0.9fr;
+      align-items: center;
+      color: var(--muted);
+      font-size: 0.95rem;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: flex-end;
+      gap: 18px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 1120px) {
+      h1 {
+        font-size: 3.55rem;
+      }
+
+      .hero-layout,
+      .platform-layout,
+      .assurance-band {
+        grid-template-columns: 1fr;
+      }
+
+      .signal-grid,
+      .workflow-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 860px) {
+      .nav-links {
+        display: none;
+      }
+
+      .hero {
+        padding: 68px 0 60px;
+      }
+
+      h1 {
+        font-size: 2.9rem;
+      }
+
+      .hero-copy {
+        font-size: 1.02rem;
+      }
+
+      .platform-summary,
+      .modality-grid,
+      .signal-grid,
+      .workflow-grid,
+      .feature-grid,
+      .assurance-points,
+      .footer-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-links {
+        justify-content: flex-start;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .site-header .bar {
+        min-height: 68px;
+      }
+
+      h1 {
+        font-size: 2.32rem;
+      }
+
+      .section {
+        padding: 70px 0;
+      }
+
+      .section-head h2,
+      .assurance-copy h3,
+      .cta-card h2 {
+        font-size: 1.9rem;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      .btn {
+        transition: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container">
+      <div class="bar">
+        <a class="brand" href="#top" aria-label="Orris Health home">
+          Orris Health
+          <span>AI agents for health diagnostics</span>
+        </a>
+        <nav class="nav-links" aria-label="Primary">
+          <a href="#platform">Platform</a>
+          <a href="#workflow">Workflow</a>
+          <a href="#modalities">Modalities</a>
+          <a href="#safeguards">Safeguards</a>
+        </nav>
+        <a class="btn btn-secondary" href="#contact">Talk to the team</a>
+      </div>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container">
+        <div class="hero-layout">
+          <div>
+            <p class="eyebrow">Clinical AI built for speed, traceability, and human review</p>
+            <h1>Specialized AI agents for faster, smarter health diagnostics.</h1>
+            <p class="hero-copy">
+              Orris Health turns fragmented clinical data into a clear diagnostic workflow. Our agents
+              triage incoming cases, assemble patient context, surface likely findings, and route the
+              next-best action to the right clinician without losing the audit trail.
+            </p>
+            <div class="btn-row">
+              <a class="btn btn-primary" href="#contact">Book a demo</a>
+              <a class="btn btn-secondary" href="#platform">See the platform</a>
+            </div>
+            <ul class="hero-points" aria-label="Platform highlights">
+              <li>Multi-agent review across images, labs, and notes</li>
+              <li>Escalation logic that keeps clinicians in control</li>
+              <li>Built for radiology, dermatology, retinal, and triage workflows</li>
+            </ul>
+          </div>
+
+          <aside class="hero-panel" aria-label="Platform summary">
+            <div>
+              <h2>Orris Diagnostic Operating Model</h2>
+              <p>Structured for care teams that need fast triage, clear evidence, and accountable handoffs.</p>
+            </div>
+            <div class="panel-block">
+              <span class="panel-label">Intake</span>
+              <strong>Images, labs, notes, and prior context come together in one review surface.</strong>
+              <p>No jumping between disconnected systems before the case is even understood.</p>
+            </div>
+            <div class="panel-block">
+              <span class="panel-label">Reasoning</span>
+              <strong>Specialized agents handle bounded tasks and expose uncertainty instead of hiding it.</strong>
+              <p>Each recommendation stays tied to the signal that produced it.</p>
+            </div>
+            <div class="panel-block">
+              <span class="panel-label">Action</span>
+              <strong>Escalation, follow-up, and clinician sign-off stay visible all the way through.</strong>
+              <p>The system supports decision-making without turning clinical review into a black box.</p>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <section class="section band">
+      <div class="container">
+        <div class="signal-grid">
+          <article class="signal">
+            <span>Unified intake</span>
+            <strong>Bring scans, vitals, notes, and labs into one agent workflow.</strong>
+            <p>No more jumping between viewers, inboxes, and fragmented case summaries.</p>
+          </article>
+          <article class="signal">
+            <span>Specialist agents</span>
+            <strong>Use focused agents for modality-specific review and cross-checking.</strong>
+            <p>Each agent handles a bounded task, then contributes to a shared evidence trail.</p>
+          </article>
+          <article class="signal">
+            <span>Clinical routing</span>
+            <strong>Escalate outliers, urgent flags, and uncertain findings immediately.</strong>
+            <p>Care teams see why a case moved, what evidence was used, and who owns the next step.</p>
+          </article>
+          <article class="signal">
+            <span>Governed output</span>
+            <strong>Every recommendation stays reviewable, explainable, and clinician-supervised.</strong>
+            <p>Designed for decision support, not black-box autonomy.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="platform">
+      <div class="container">
+        <div class="section-head">
+          <p>Platform</p>
+          <h2>One diagnostic surface for intake, review, coordination, and escalation.</h2>
+          <p>
+            Orris Health gives teams a shared operating layer for health diagnostics: incoming signal,
+            agent reasoning, clinician review, and workflow handoff all visible in one place.
+          </p>
+        </div>
+        <div class="platform-layout">
+          <div class="platform-summary">
+            <article class="summary-card">
+              <span>Case assembly</span>
+              <strong>Relevant history, prior imaging, lab trends, and notes are pulled into a ready-to-review brief.</strong>
+              <p>Clinicians start with context instead of hunting for it.</p>
+            </article>
+            <article class="summary-card">
+              <span>Interpretation</span>
+              <strong>Bounded analyses run against the incoming modality and keep uncertainty visible.</strong>
+              <p>Findings are surfaced with rationale, not just a score.</p>
+            </article>
+            <article class="summary-card">
+              <span>Escalation</span>
+              <strong>High-risk findings move into the right queue with a clear explanation of why.</strong>
+              <p>Operational urgency becomes easier to trust and easier to act on.</p>
+            </article>
+            <article class="summary-card">
+              <span>Sign-off</span>
+              <strong>Final decisions, audit trails, and workflow ownership stay with the clinical team.</strong>
+              <p>Supportive AI, accountable clinical review.</p>
+            </article>
+          </div>
+          <div class="feature-list">
+            <article class="feature">
+              <strong>Case assembly agents</strong>
+              <p>Pull the relevant history, prior imaging, lab trends, and notes into a ready-to-review diagnostic brief.</p>
+            </article>
+            <article class="feature">
+              <strong>Interpretation agents</strong>
+              <p>Run bounded analyses against the incoming modality, capture uncertainty, and expose supporting signals.</p>
+            </article>
+            <article class="feature">
+              <strong>Escalation orchestration</strong>
+              <p>Route high-risk findings to the right queue, trigger callbacks, or request additional review when confidence falls short.</p>
+            </article>
+            <article class="feature">
+              <strong>Clinician sign-off</strong>
+              <p>Final decisions, audit trails, and workflow ownership stay firmly with the clinical team.</p>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section band" id="workflow">
+      <div class="container">
+        <div class="section-head">
+          <p>Workflow</p>
+          <h2>A clean handoff from intake to insight to action.</h2>
+          <p>
+            The system is designed like a care operations layer: fast to scan, easy to trust, and structured
+            around the real sequence diagnostic teams already follow.
+          </p>
+        </div>
+        <div class="workflow-grid">
+          <article class="step-card">
+            <div class="step-num">1</div>
+            <h3>Ingest the case</h3>
+            <p>Bring in the image set, labs, vitals, referral context, and prior records as soon as the case arrives.</p>
+          </article>
+          <article class="step-card">
+            <div class="step-num">2</div>
+            <h3>Dispatch the right agents</h3>
+            <p>Assign specialized agents to triage urgency, inspect the modality, summarize evidence, and flag uncertainty.</p>
+          </article>
+          <article class="step-card">
+            <div class="step-num">3</div>
+            <h3>Surface the rationale</h3>
+            <p>Show what drove the recommendation, what information was missing, and where a clinician should focus next.</p>
+          </article>
+          <article class="step-card">
+            <div class="step-num">4</div>
+            <h3>Move the case forward</h3>
+            <p>Send the case to the right queue, request follow-up, or complete review with the final decision attached.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="modalities">
+      <div class="container">
+        <div class="section-head">
+          <p>Modalities</p>
+          <h2>Built for the kinds of diagnostic work that demand context and speed.</h2>
+          <p>
+            Orris agents can be tuned to a specialty workflow, then connected into a broader diagnostic operating model.
+          </p>
+        </div>
+        <div class="modality-grid">
+          <article class="modality-card">
+            <h3>Imaging triage</h3>
+            <p>Prioritize chest, neuro, and musculoskeletal studies while surfacing the evidence behind agent confidence.</p>
+            <ul>
+              <li>Urgency classification with visible review status</li>
+              <li>Context pulled forward from prior studies and notes</li>
+              <li>Escalation paths for uncertain or high-risk findings</li>
+            </ul>
+          </article>
+          <article class="modality-card">
+            <h3>Dermatology review</h3>
+            <p>Compare lesion structure, summarize change over time, and push suspicious cases into rapid follow-up pathways.</p>
+            <ul>
+              <li>Case-by-case review with longitudinal context</li>
+              <li>Bounded agent support for evidence gathering</li>
+              <li>Clear handoff into specialist or callback workflows</li>
+            </ul>
+          </article>
+          <article class="modality-card">
+            <h3>Retinal screening</h3>
+            <p>Support population-scale screening with queueing, anomaly detection, and clear evidence for escalation.</p>
+            <ul>
+              <li>High-volume intake without losing review structure</li>
+              <li>Escalation logic for suspicious findings</li>
+              <li>Operational visibility across screening queues</li>
+            </ul>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section band" id="safeguards">
+      <div class="container">
+        <div class="assurance-band">
+          <div class="assurance-copy">
+            <h3>Agentic where it helps. Governed where it matters.</h3>
+            <p>
+              Health diagnostics needs speed and rigor at the same time. Orris is designed to assist clinical teams
+              with bounded, reviewable agent behaviors instead of opaque end-to-end automation.
+            </p>
+          </div>
+          <div>
+            <div class="assurance-points">
+              <div class="assurance-point">
+                <strong>Evidence-first output</strong>
+                <span>Recommendations stay tied to the data that produced them.</span>
+              </div>
+              <div class="assurance-point">
+                <strong>Uncertainty exposed</strong>
+                <span>Agents flag ambiguity instead of hiding it behind a single score.</span>
+              </div>
+              <div class="assurance-point">
+                <strong>Clinician checkpoints</strong>
+                <span>Approval, override, and audit logging remain part of the workflow.</span>
+              </div>
+              <div class="assurance-point">
+                <strong>Operational fit</strong>
+                <span>Queues, escalations, and handoffs mirror how real care teams already work.</span>
+              </div>
+            </div>
+            <ul class="checklist">
+              <li>Specialized agents collaborate without hiding accountability.</li>
+              <li>Clinical teams see what changed, why it changed, and who owns the next decision.</li>
+              <li>The workflow remains readable even when urgency is high and intake volume rises.</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div class="section-head">
+          <p>Why Orris</p>
+          <h2>Designed like a diagnostics company, not a generic AI wrapper.</h2>
+          <p>
+            The product experience is centered on care operations: queues, modalities, evidence, escalation, and team accountability.
+          </p>
+        </div>
+        <div class="feature-grid">
+          <article class="feature-card">
+            <h3>Purpose-built interfaces</h3>
+            <p>Structured for fast scan-and-decide workflows, with summary layers that help clinicians orient quickly without hiding the source material.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Composable agent architecture</h3>
+            <p>Deploy a narrow agent for one part of the workflow or orchestrate multiple agents across intake, interpretation, and follow-up.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Operational visibility</h3>
+            <p>Teams can see what is waiting, what has been escalated, where uncertainty sits, and which clinician needs to review next.</p>
+          </article>
+          <article class="feature-card">
+            <h3>Built for trust</h3>
+            <p>Every interface element is tuned to reinforce oversight, auditability, and responsible decision support in clinical environments.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section cta" id="contact">
+      <div class="container">
+        <div class="cta-card">
+          <h2>Bring AI agents into diagnostic workflows without losing clinical control.</h2>
+          <p>
+            Orris Health helps care teams move faster on intake, review, and escalation while keeping the final judgment where it belongs: with people.
+          </p>
+          <div class="btn-row">
+            <a class="btn btn-primary" href="mailto:hello@orrishealth.com">hello@orrishealth.com</a>
+            <a class="btn btn-ghost" href="#top">Back to top</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>Orris Health<br>AI agents for health diagnostics.</div>
+        <div class="footer-links">
+          <a href="#platform">Platform</a>
+          <a href="#workflow">Workflow</a>
+          <a href="#modalities">Modalities</a>
+          <a href="#safeguards">Safeguards</a>
+        </div>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
